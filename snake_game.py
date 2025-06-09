@@ -67,17 +67,34 @@ def juego():
         # --- Pantalla de "Game Over" ---
         while game_close:
             pantalla.fill(NEGRO)
+            
+            # Mensaje de "Perdiste"
             mensaje_perdiste = fuente_game_over.render("¡PERDISTE!", True, ROJO)
-            mensaje_instrucciones = fuente_puntuacion.render("Presiona 'C' para continuar o 'Q' para salir", True, BLANCO)
+            mensaje_perdiste_rect = mensaje_perdiste.get_rect(center=(ANCHO_PANTALLA / 2, ALTO_PANTALLA / 3))
+            pantalla.blit(mensaje_perdiste, mensaje_perdiste_rect)
+
+            # --- INSTRUCCIONES EN DOS LÍNEAS (CÓDIGO CORREGIDO) ---
+            # 1. Renderizamos cada línea por separado
+            linea1 = fuente_puntuacion.render("Presiona 'C' para continuar", True, BLANCO)
+            linea2 = fuente_puntuacion.render("o 'Q' para salir", True, BLANCO)
+
+            # 2. Obtenemos el rectángulo de cada línea para poder centrarla
+            linea1_rect = linea1.get_rect(center=(ANCHO_PANTALLA / 2, ALTO_PANTALLA / 2))
+            linea2_rect = linea2.get_rect(center=(ANCHO_PANTALLA / 2, linea1_rect.centery + linea1.get_height()))
+
+            # 3. Dibujamos las dos líneas en la pantalla
+            pantalla.blit(linea1, linea1_rect)
+            pantalla.blit(linea2, linea2_rect)
             
-            pantalla.blit(mensaje_perdiste, [ANCHO_PANTALLA / 2 - 120, ALTO_PANTALLA / 3])
-            pantalla.blit(mensaje_instrucciones, [ANCHO_PANTALLA / 2 - 300, ALTO_PANTALLA / 2])
-            
+            # Mostramos la puntuación final
             mostrar_puntuacion(longitud_serpiente - 1)
             pygame.display.update()
 
             # Opciones al perder
             for event in pygame.event.get():
+                if event.type == pygame.QUIT: # Permite cerrar la ventana en la pantalla de Game Over
+                    game_over = True
+                    game_close = False
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_q:
                         game_over = True
